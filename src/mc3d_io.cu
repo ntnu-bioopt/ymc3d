@@ -17,7 +17,6 @@ int opticalprops_read_from_file(opticalprops_t *optProps, char *filename){
 	}
 
 	//read no. of dimensions
-	int dim;
 	int numread = fread(&(optProps->num_tissue_types), sizeof(int), 1, stream);
 
 	optProps->num_tissue_types += 1; //set tissue type position 0 to ambient medium
@@ -216,7 +215,7 @@ void save_diff_refl(geometry_t geometry, double *diffRefl, int numPhotons, char 
 		diffReflSaved[i] = diffRefl[i]/(numPhotons*1.0);
 	}
 
-	saveProperty(2, geometry, diffReflSaved, filename.c_str());
+	save_property(2, geometry, diffReflSaved, filename.c_str());
 	delete [] diffReflSaved;
 }
 
@@ -225,13 +224,12 @@ void save_abs_map(geometry_t geometry, opticalprops_t optProps, float *abs, int 
 	string filename = string(outName) + "_abs.bin";
 	double *absDbl = new double[geometry.num_x*geometry.num_y*geometry.num_z];
 
-	double beamEnergy = 1.0; //FIXME
 	double normalization = numPhotons*1.0;//beamEnergy*geometry.length_x*geometry.length_y/(numPhotons*geometry.sample_dx*geometry.sample_dy*geometry.sample_dz); 
 
 	for (int i=0; i < geometry.num_x*geometry.num_y*geometry.num_z; i++){
 		absDbl[i] = abs[i]*normalization;
 	}
-	saveProperty(3, geometry, absDbl, filename.c_str());
+	save_property(3, geometry, absDbl, filename.c_str());
 
 	//fluence map
 	for (int k=0; k < geometry.num_z; k++){
@@ -244,7 +242,7 @@ void save_abs_map(geometry_t geometry, opticalprops_t optProps, float *abs, int 
 		}
 	}
 	filename = string(outName) + "_flu.bin";
-	saveProperty(3, geometry, absDbl, filename.c_str());
+	save_property(3, geometry, absDbl, filename.c_str());
 
 	delete [] absDbl;
 }
