@@ -1,0 +1,16 @@
+#1: Licensing issues
+YMC3D uses a GPL-licensed RNG component from GPU-MCML. I'd rather this project to be fully licensed under a permissive license. A clean-room implementation of the same RNG algorithm is needed. 
+
+#2: File format
+YMC3D currently uses a binary file format for both input and output. This is not optimal, and should be exchanged for a plaintext ASCII format. 
+
+#3. Definitions.txt
+YMC3D currently has e.g. number of photons and boundary conditions and other properties hard coded. It would be better to have this as a part of a parameter file to be input on the command line. See also issue #4. 
+
+#4. Hard coding
+Boundary conditions, whether absorption properties should be saved, are currently hard coded into the device functions. It would be better if the function prototypes took this in as a function argument. 
+
+#5. Working MATLAB geometry/tissue generation examples
+The provided examples serve as a rough outline of how the tissue and geometry can be generated and are not working examples. 
+This was mainly for avoiding the need to include too many files containing absorption properties. I'd rather make 
+more coherent, runnable examples after defining a coherent library for organizing and obtaining tissue properties across both MATLAB and C (so that e.g. gpu-dm don't have to use this incoherent absorption_props.cpp interface, which is a strange way to do it). 
