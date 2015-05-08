@@ -472,8 +472,6 @@ void run_3dmc_gpu(geometry_t geometry, opticalprops_t optProps, int num_photons,
 	cudaStreamCreate(&computeStream);
 	cudaStreamCreate(&memcpyStream);
 
-	int timesToPrint = num_photons/100000; //number of times we should print status updates
-
 	int finished_photons_counted_from_gpu = 0;
 
 	cudaEvent_t start, stop;
@@ -540,13 +538,13 @@ void run_3dmc_gpu(geometry_t geometry, opticalprops_t optProps, int num_photons,
 		#pragma omp parallel for	
 		for (int i=0; i < photons.num_photons; i++){
 			if (!firstTime && (started_photons < num_photons)){
-				detector(i, geometry, hostPhotons, R, R_tot, T, T_tot);
+				photon_detector(i, geometry, hostPhotons, R, R_tot, T, T_tot);
 			} else if (!firstTime){
 				//finish already started photons
 				if (!hostPhotons.finished_photons[i]){
 					notFinished = true;
 				} else if (!photon_added[i]){
-					detector(i, geometry, hostPhotons, R, R_tot, T, T_tot);
+					photon_detector(i, geometry, hostPhotons, R, R_tot, T, T_tot);
 					photon_added[i] = true;
 				}
 			}
@@ -596,7 +594,7 @@ void run_3dmc_gpu(geometry_t geometry, opticalprops_t optProps, int num_photons,
 	cudaFree(A_device);
 
 	delete [] photon_added;
-	freeOptProps(&devOptProps);
+	opticalprops_free(&devOptProps);
 	
 	*num_finished_photons = finished_photons_counted_from_gpu;
 }
