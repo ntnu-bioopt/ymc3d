@@ -1,5 +1,4 @@
 #include "mc3d_gpu.h"
-#include "mc3d_cpu.h"
 #include "mc3d_types.h"
 #include "mc3d_io.h"
 #include <cstdio>
