@@ -49,7 +49,7 @@ __device__ float photontrack_intersection(geometry_t geometry, int *i, int *j, i
 
 
 //sample_dx is grid step
-__device__ int photontrack_get_grid_coord(const float *x, const float *ux, const float *sample_dx){
+__host__ __device__ int photontrack_get_grid_coord(const float *x, const float *ux, const float *sample_dx){
 	int i = floorf(*x/(*sample_dx)); //initial estimate. Assumes that the coordinate is either within bounding box or on the boundary with positive direction. Rounds down
 	i += (*x == (i+1)*(*sample_dx)); //quickfix numerical errors
 	float bmin = i*(*sample_dx);

@@ -142,8 +142,8 @@ void photon_properties_deinitialize(photon_properties_t *photons){
 //update R and T with the input photon number
 void photon_detector(int photon, geometry_t geometry, photon_properties_t photons, double *R, double *totR, double *T, double *totT){
 	if (photons.finished_photons[photon]){
-		int ind_x = getGridCoord(&photons.x[photon], &photons.ux[photon], &geometry.sample_dx);
-		int ind_y = getGridCoord(&photons.y[photon], &photons.uy[photon], &geometry.sample_dy);
+		int ind_x = photontrack_get_grid_coord(&photons.x[photon], &photons.ux[photon], &geometry.sample_dx);
+		int ind_y = photontrack_get_grid_coord(&photons.y[photon], &photons.uy[photon], &geometry.sample_dy);
 
 		bool inside_geometry = ((ind_x >= 0) && (ind_y >= 0) && (ind_x < geometry.num_x) && (ind_y < geometry.num_y));
 		if (photons.z[photon] <= 0){

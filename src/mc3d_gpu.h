@@ -22,7 +22,7 @@ __device__ int photontrack_get_tissue_type(int i, int j, int k, float z, float u
 __device__ float photontrack_intersection(geometry_t geometry, int *i, int *j, int *k, float *x, const float *ux, float *y, const float *uy, float *z, const float *uz);
 
 //return current grid coordinate along the given coordinate direction
-__device__ int photontrack_get_grid_coord(const float *x, const float *ux, const float *sample_dx);
+__host__ __device__ int photontrack_get_grid_coord(const float *x, const float *ux, const float *sample_dx);
 
 //calculate specular reflection
 __device__ float photontrack_calc_specular_reflection(float n0, float n1);
