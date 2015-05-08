@@ -2,8 +2,8 @@
 #include <cstdio>
 
 
-#include "mc3d_types.h"
 #include "gpumcml_rng.h"
+#include "mc3d_types.h"
 
 /*****************************************************************************
 *

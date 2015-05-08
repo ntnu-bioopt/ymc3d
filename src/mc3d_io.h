@@ -1,3 +1,6 @@
+#ifndef MC3D_IO_H_DEFINED
+#define MC3D_IO_H_DEFINED
+
 //create geometry, optical properties from file
 int opticalprops_read_from_file(opticalprops_t *optProps, char *filename);
 void opticalprops_transfer_to_device(opticalprops_t *devOptProps, opticalprops_t *optProps);
@@ -13,3 +16,5 @@ void save_property(int numDims, geometry_t geometry, const double *data, const c
 //drs and absorption
 void save_diff_refl(geometry_t geometry, double *diffRefl, int numPhotons, char *outName);
 void save_abs_map(geometry_t geometry, opticalprops_t optProps, float *abs, int numPhotons, char *outName);
+
+#endif

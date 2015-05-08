@@ -1,23 +1,17 @@
 #include <cmath>
-#include "gpumcml_rng.cu"
+#include "mc3d_rng.cu"
 
 #ifndef WIN32
 #include <sys/time.h>
+#include <signal.h>
 #endif
 
-#include "mc3d_rng.h"
 #include <iostream>
 #include "mc3d_types.h"
 #include "mc3d_io.h"
 #include "mc3d_photons.h"
 #include <cstdio>
-#include <signal.h>
 using namespace std;
-
-
-#ifdef FINGER_SIMULATION
-#warning "Compiling for circular irradiation of finger."
-#endif
 
 texture<int, 3, cudaReadModeElementType> tissue_type_tex; //3D texture containing spatially resolved tissue types
 __device__ int photontrack_get_tissue_type(int i, int j, int k, float z, float uz){

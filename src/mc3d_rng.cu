@@ -1,5 +1,5 @@
-#include "gpumcml_rng.h"
 #include "mc3d_rng.h"
+#include "gpumcml_rng.cu"
 #include <cstdio>
 
 
