@@ -1,3 +1,11 @@
+//=======================================================================================================
+// Copyright 2015 Asgeir Bjorgan, Matija Milanic, Lise Lyngsnes Randeberg
+// Distributed under the MIT License.
+// (See accompanying file LICENSE or copy at
+// http://opensource.org/licenses/MIT)
+//=======================================================================================================
+
+
 #ifndef MC3D_IO_H_DEFINED
 #define MC3D_IO_H_DEFINED
 

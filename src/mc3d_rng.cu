@@ -1,7 +1,13 @@
+//=======================================================================================================
+// Copyright 2015 Asgeir Bjorgan, Matija Milanic, Lise Lyngsnes Randeberg
+// Distributed under the MIT License.
+// (See accompanying file LICENSE or copy at
+// http://opensource.org/licenses/MIT)
+//=======================================================================================================
+
 #include "mc3d_rng.h"
 #include "gpumcml_rng.cu"
 #include <cstdio>
-
 
 void rng_init(rng_state_t *rng_state, UINT64 seed, int num_rngs){
 	//initialize RNG

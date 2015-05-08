@@ -1,3 +1,10 @@
+//=======================================================================================================
+// Copyright 2015 Asgeir Bjorgan, Matija Milanic, Lise Lyngsnes Randeberg
+// Distributed under the MIT License.
+// (See accompanying file LICENSE or copy at
+// http://opensource.org/licenses/MIT)
+//=======================================================================================================
+
 #include <cmath>
 #include "mc3d_rng.cu"
 

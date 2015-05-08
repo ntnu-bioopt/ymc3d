@@ -1,3 +1,11 @@
+//=======================================================================================================
+// Copyright 2015 Asgeir Bjorgan, Matija Milanic, Lise Lyngsnes Randeberg
+// Distributed under the MIT License.
+// (See accompanying file LICENSE or copy at
+// http://opensource.org/licenses/MIT)
+//=======================================================================================================
+
+
 #include "mc3d_types.h"
 #include "mc3d_photons.h"
 #include "mc3d_gpu.h"
