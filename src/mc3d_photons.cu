@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-void initializePhotons(Photons *photons, int num_photons, AllocType allocType){
+void photon_properties_initialize(photon_properties_t *photons, int num_photons, AllocType allocType){
 	photons->allocWhere = allocType;
 	switch (allocType){
 		case ALLOC_HOST:
@@ -105,7 +105,7 @@ void initializePhotons(Photons *photons, int num_photons, AllocType allocType){
 	}
 }
 
-void deinitializePhotons(Photons *photons){
+void photon_properties_deinitialize(photon_properties_t *photons){
 	switch (photons->allocWhere){
 		case ALLOC_GPU:
 			cudaFree(photons->x);
@@ -140,7 +140,7 @@ void deinitializePhotons(Photons *photons){
 }
 
 //update R and T with the input photon number
-void detector(int photon, Geometry geometry, Photons photons, double *R, double *totR, double *T, double *totT){
+void photon_detector(int photon, geometry_t geometry, photon_properties_t photons, double *R, double *totR, double *T, double *totT){
 	if (photons.finished_photons[photon]){
 		int ind_x = getGridCoord(&photons.x[photon], &photons.ux[photon], &geometry.sample_dx);
 		int ind_y = getGridCoord(&photons.y[photon], &photons.uy[photon], &geometry.sample_dy);
@@ -152,30 +152,12 @@ void detector(int photon, Geometry geometry, Photons photons, double *R, double 
 				#pragma omp atomic
 				R[ind_y*geometry.num_x + ind_x] += photons.W[photon];
 			}
-			//#pragma omp atomic
-			//*totR += photons.W[photon];
 		} else {
 			//add to transmission
 			if (inside_geometry){
 				#pragma omp atomic
 				T[ind_y*geometry.num_x + ind_x] += photons.W[photon];
 			} 
-			//#pragma omp atomic
-			//*totT += photons.W[photon];
 		}
 	}
 }
-
-
-
-void beam(int photon, Geometry geometry, Photons photons, double *B){
-	float ux = 0, uy = 0; 
-	int ind_x = getGridCoord(&photons.x[photon], &ux, &geometry.sample_dx);
-	int ind_y = getGridCoord(&photons.y[photon], &uy, &geometry.sample_dy);
-
-	if ((photons.W[photon] > BEAM_DONT_ADD_COORDINATES) && (ind_x < geometry.num_x) && (ind_x >= 0) && (ind_y < geometry.num_y) && (ind_y >= 0)){
-		#pragma omp atomic
-		B[ind_y*geometry.num_x + ind_x] += photons.W[photon];
-	}
-}
-	

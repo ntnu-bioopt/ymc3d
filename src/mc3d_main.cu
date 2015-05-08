@@ -18,15 +18,11 @@ int main(int argc, char* argv[]){
 	defPath = (char*)argv[3];
 	outName = (char*)argv[4];
 
-	#ifdef FINGER_SIMULATION
-	float arclength = strtod(argv[5], NULL);
-	#endif
-
 	//read geometry and tissue definitions
-	Geometry geometry;
-	int stat = createGeometry(&geometry, geomPath); //includes cuda allocated tissue texture array
-	OpticalProps optProps;
-	stat += createOptProps(&optProps, tissuePath);
+	geometry_t geometry;
+	int stat = geometry_read_from_file(&geometry, geomPath); //includes cuda allocated tissue texture array
+	opticalprops_t optProps;
+	stat += opticalprops_read_from_file(&optProps, tissuePath);
 	if (stat != 0){
 		return 1;
 	}
@@ -46,9 +42,6 @@ int main(int argc, char* argv[]){
 	double *T = new double[geometry.num_x*geometry.num_y]();
 	double totT = 0; //transmittance both inside and outside geometry
 
-	//beam
-	double *B = new double[geometry.num_x*geometry.num_y]();
-	
 	//absorption map
 	float *A = new float[geometry.num_x*geometry.num_y*geometry.num_z]();
 	
@@ -58,20 +51,8 @@ int main(int argc, char* argv[]){
 	int num_photons = 30000000;
 	int finished_photons = 0; //number of finished photons
 
-	
 	//run simulation	
-	#ifdef FINGER_SIMULATION
-	run_3dmc_gpu(geometry, optProps, num_photons, R, &totDiffR, T, &totT, A, B, &finished_photons, arclength);
-	#else
-	run_3dmc_gpu(geometry, optProps, num_photons, R, &totDiffR, T, &totT, A, B, &finished_photons);
-	#endif
-	//run_3dmc_cpu(geometry, optProps, num_photons, R, &totDiffR, T, &totT, A, &finished_photons);
-
-		
-
-	//Specular reflectance
-	float Rsp = calcRSp(optProps.n[TISSUE_TYPE_AIR], optProps.n[1]);
-	fprintf(stderr, "\nSpecular reflectance is %f.\n", Rsp);
+	run_3dmc_gpu(geometry, optProps, num_photons, R, &totDiffR, T, &totT, A, &finished_photons);
 
 	//Calculate diffuse reflectance
 	fprintf(stderr, "Total diffuse reflectance is %f.\n", totDiffR/finished_photons);
@@ -86,17 +67,13 @@ int main(int argc, char* argv[]){
 	for (int i=0; i < geometry.num_x*geometry.num_y*geometry.num_z; i++){
 		totAbsIn += A[i];
 	}
-
-
 	
 	fprintf(stderr, "Absorbed fraction in geometry is %f.\n", totAbsIn/finished_photons);
 	fprintf(stderr, "Absorbed fraction outside geometry is NOT CALCULATED.\n");
 	
 
 	//save data
-	saveDiffRefl(geometry, R, finished_photons, outName);
-	//saveBeam(geometry, B, outName);
-	saveAbsMap(geometry, optProps, A, finished_photons, outName);
+	save_diff_refl(geometry, R, finished_photons, outName);
 
 	//save number of photons to file
 	FILE *numPhotFile = fopen(string(string(outName) + "_simparam.dat").c_str(), "w");
@@ -104,17 +81,12 @@ int main(int argc, char* argv[]){
 	fclose(numPhotFile);
 
 	//cleanup
-
-	freeGeometry(&geometry);
-
-	freeOptProps(&optProps);
-
+	geometry_free(&geometry);
+	opticalprops_free(&optProps);
 
 	delete [] A;
 	delete [] R;
 	delete [] T;
-
-	cerr << endl << "tot T " <<  totT/finished_photons << endl;
 
 	return 0;
 }

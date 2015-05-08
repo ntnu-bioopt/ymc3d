@@ -2,7 +2,7 @@
 #define MC3D_PHOTONS_H_DEFINED
 
 #include "mc3d_types.h"
-struct Photons{
+typedef struct{
 	int num_photons;
 
 	//current photon coordinates
@@ -27,16 +27,14 @@ struct Photons{
 	float *dummy; 
 
 	AllocType allocWhere; //where the arrays are allocated
-};
-void initializePhotons(Photons *photons, int num_photons, AllocType allocType);
+} photon_properties_t;
 
-void deinitializePhotons(Photons *photons);
+void photon_properties_initialize(photon_properties_t *photons, int num_photons, AllocType allocType);
+
+void photon_properties_deinitialize(photon_properties_t *photons);
 
 
 //update R and T with refl and transm from finished photons, depending on depth
-void detector(int photon, Geometry geometry, Photons photons, double *R, double *totR, double *T, double *totT);
-void beam(int i, Geometry geometry, Photons photons, double *B);
-
-#define BEAM_DONT_ADD_COORDINATES -1 //for setting the weight to -1 if the photon position in the beam photon thing should be saved
+void photon_detector(int photon_ind, geometry_t geometry, photon_properties_t photons, double *R, double *totR, double *T, double *totT);
 
 #endif

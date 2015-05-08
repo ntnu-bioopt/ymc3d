@@ -1,21 +1,15 @@
 //create geometry, optical properties from file
-int createOptProps(OpticalProps *optProps, char *filename);
-void createDeviceOptProps(OpticalProps *devOptProps, OpticalProps *optProps);
-int createGeometry(Geometry *geometry, char *filename);
-
-//seeds for random number generator
-void createRNGSeeds(RNGSeeds *rngSeeds, UINT64 seed, int num_photons_per_packet);
-
+int opticalprops_read_from_file(opticalprops_t *optProps, char *filename);
+void opticalprops_transfer_to_device(opticalprops_t *devOptProps, opticalprops_t *optProps);
+int geometry_read_from_file(geometry_t *geometry, char *filename);
 
 //mem cleanup
-void freeOptProps(OpticalProps *optProps);
-void freeRNGSeeds(RNGSeeds *rngSeeds);
-void freeGeometry(Geometry *geometry);
+void opticalprops_free(opticalprops_t *optProps);
+void geometry_free(geometry_t *geometry);
 
 //general function for printing a property to binary file
-void saveProperty(int numDims, Geometry geometry, const double *data, const char *outName);
+void save_property(int numDims, geometry_t geometry, const double *data, const char *outName);
 
 //drs and absorption
-void saveDiffRefl(Geometry geometry, double *diffRefl, int numPhotons, char *outName);
-void saveBeam(Geometry geometry, double *beam, char *outName);
-void saveAbsMap(Geometry geometry, OpticalProps optProps, float *abs, int numPhotons, char *outName);
+void save_diff_refl(geometry_t geometry, double *diffRefl, int numPhotons, char *outName);
+void save_abs_map(geometry_t geometry, opticalprops_t optProps, float *abs, int numPhotons, char *outName);

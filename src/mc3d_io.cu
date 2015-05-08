@@ -6,7 +6,7 @@
 #include <cstdio>
 using namespace std;
 
-int createOptProps(OpticalProps *optProps, char *filename){
+int opticalprops_read_from_file(opticalprops_t *optProps, char *filename){
 	FILE *stream;
 
 	//read tissue types definition
@@ -19,15 +19,6 @@ int createOptProps(OpticalProps *optProps, char *filename){
 	//read no. of dimensions
 	int dim;
 	int numread = fread(&(optProps->num_tissue_types), sizeof(int), 1, stream);
-
-	#ifndef FINGER_SIMULATION
-	/*numread = fread(&dim, sizeof(int), 1, stream);
-	if (dim != NUM_OPTPROPS){
-		fclose(stream);
-		fprintf(stderr, "Tissue definition file %s corrupted.\n", filename);
-		return -1;
-	}*/
-	#endif
 
 	optProps->num_tissue_types += 1; //set tissue type position 0 to ambient medium
 
@@ -68,7 +59,9 @@ int createOptProps(OpticalProps *optProps, char *filename){
 	return 0;
 }
 
-void createDeviceOptProps(OpticalProps *devOptProps, OpticalProps *optProps){
+
+
+void opticalprops_transfer_to_device(opticalprops_t *devOptProps, opticalprops_t *optProps){
 	devOptProps->num_tissue_types = optProps->num_tissue_types;
 
 	//allocate cuda arrays
@@ -86,7 +79,8 @@ void createDeviceOptProps(OpticalProps *devOptProps, OpticalProps *optProps){
 	devOptProps->allocWhere = ALLOC_GPU;
 }
 
-void freeOptProps(OpticalProps *optProps){
+
+void opticalprops_free(opticalprops_t *optProps){
 	switch (optProps->allocWhere){
 		case ALLOC_GPU:
 			cudaFree(optProps->n);
@@ -104,13 +98,7 @@ void freeOptProps(OpticalProps *optProps){
 	}
 }
 
-void freeRNGSeeds(RNGSeeds *rngSeeds){
-	cudaFree(rngSeeds->rng_x);
-	cudaFree(rngSeeds->rng_a);
-}
-
-
-int createGeometry(Geometry *geometry, char *filename){
+int geometry_read_from_file(geometry_t *geometry, char *filename){
 	FILE* stream;
 
 	//open geometry file
@@ -174,36 +162,11 @@ int createGeometry(Geometry *geometry, char *filename){
 	return 0;
 }
 
-void freeGeometry(Geometry *geometry){
+void geometry_free(geometry_t *geometry){
 	delete [] geometry->tissue_type;
 }
 
-void createRNGSeeds(RNGSeeds *rngSeeds, UINT64 seed, int num_photons_per_packet){
-	//initialize RNG
-	UINT64 *x_rng = new UINT64[num_photons_per_packet];
-	UINT32 *a_rng = new UINT32[num_photons_per_packet];
-    	if (init_RNG(x_rng, a_rng, num_photons_per_packet, "safeprimes_base32.txt", seed)){
-		exit(1);
-	}
-	
-	//allocate cuda arrays
-	UINT64 *x_rng_dev;
-	UINT32 *a_rng_dev;
-	cudaMalloc(&x_rng_dev, num_photons_per_packet*sizeof(UINT64));
-	cudaMalloc(&a_rng_dev, num_photons_per_packet*sizeof(UINT32));
-
-	//copy RNG arrays to gpu arrays
-	cudaMemcpy(x_rng_dev, x_rng, num_photons_per_packet*sizeof(UINT64), cudaMemcpyHostToDevice);
-	cudaMemcpy(a_rng_dev, a_rng, num_photons_per_packet*sizeof(UINT32), cudaMemcpyHostToDevice);
-	
-	rngSeeds->rng_x = x_rng_dev;
-	rngSeeds->rng_a = a_rng_dev;
-
-	delete [] x_rng;
-	delete [] a_rng;
-}
-
-void saveProperty(int numDims, Geometry geometry, const double *data, const char *outName){
+void save_property(int numDims, geometry_t geometry, const double *data, const char *outName){
 	if ((numDims < 2) || (numDims > 3)){
 		fprintf(stderr, "Unsupported number of dimensions.\n");
 		return;
@@ -246,7 +209,7 @@ void saveProperty(int numDims, Geometry geometry, const double *data, const char
 	fclose(stream);
 }
 
-void saveDiffRefl(Geometry geometry, double *diffRefl, int numPhotons, char *outName){
+void save_diff_refl(geometry_t geometry, double *diffRefl, int numPhotons, char *outName){
 	string filename = string(outName) + "_drs.bin";
 	double *diffReflSaved = new double[geometry.num_x*geometry.num_y];
 	for (int i=0; i < geometry.num_x*geometry.num_y; i++){
@@ -257,28 +220,13 @@ void saveDiffRefl(Geometry geometry, double *diffRefl, int numPhotons, char *out
 	delete [] diffReflSaved;
 }
 
-void saveBeam(Geometry geometry, double *beam, char *outName){
-	string filename = string(outName) + "_beam.bin";
-	saveProperty(2, geometry, beam, filename.c_str());
-}
-
-void saveAbsMap(Geometry geometry, OpticalProps optProps, float *abs, int numPhotons, char *outName){
+void save_abs_map(geometry_t geometry, opticalprops_t optProps, float *abs, int numPhotons, char *outName){
 	//absorption map
 	string filename = string(outName) + "_abs.bin";
 	double *absDbl = new double[geometry.num_x*geometry.num_y*geometry.num_z];
 
-	#ifdef FINGER_SIMULATION
-	#warning "Finger simulation in absmap"
-	double pulseEnergy = 10.0e-03; //J
-	double pulseDuration = 5.0e-09; //s
-	double energyPerPhoton = pulseEnergy/numPhotons;
-	double voxelSize = geometry.sample_dx*geometry.sample_dy*geometry.sample_dz;
-	double normalization = energyPerPhoton/(voxelSize*pulseDuration);
-
-	#else
 	double beamEnergy = 1.0; //FIXME
 	double normalization = numPhotons*1.0;//beamEnergy*geometry.length_x*geometry.length_y/(numPhotons*geometry.sample_dx*geometry.sample_dy*geometry.sample_dz); 
-	#endif
 
 	for (int i=0; i < geometry.num_x*geometry.num_y*geometry.num_z; i++){
 		absDbl[i] = abs[i]*normalization;

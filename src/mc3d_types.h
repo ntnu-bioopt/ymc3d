@@ -18,29 +18,21 @@
 #include "gpumcml_rng.h"
 enum AllocType{ALLOC_GPU, ALLOC_HOST};
 
-struct OpticalProps{
-	int num_tissue_types;
-	float *n;
-	float *mua;
-	float *mus;
-	float *g;
+typedef struct{
+	int num_tissue_types; //number of different tissue types
+	float *n; //refraction index
+	float *mua; //absorption coeff
+	float *mus; //scattering coeff
+	float *g; //anistropy factor
 
-	AllocType allocWhere; 
-};
+	AllocType allocWhere; //whether arrays are allocated on host or GPU
+} opticalprops_t;
 
-
-
-struct RNGSeeds{
-	UINT64 *rng_x;
-	UINT32 *rng_a;
-};
-
-
-struct Geometry{
-	float sample_dx, sample_dy, sample_dz;
-	float length_x, length_y, length_z;
-	int num_x, num_y, num_z;
-	int *tissue_type;
-};
+typedef struct{
+	float sample_dx, sample_dy, sample_dz; //spatial discretization
+	float length_x, length_y, length_z; //length of VOI
+	int num_x, num_y, num_z; //number of voxels
+	int *tissue_type; //array over tissue types, corresponding to indices in the optical property arrays above
+} geometry_t;
 
 #endif
