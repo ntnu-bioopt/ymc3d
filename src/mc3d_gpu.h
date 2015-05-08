@@ -2,6 +2,7 @@
 #define MC3D_GPU_H_DEFINED
 
 #include "mc3d_types.h"
+#include "mc3d_photons.h"
 #include "mc3d_rng.h"
 
 //MAIN TRACKER FUNCTION
