@@ -1,4 +1,6 @@
 #include "gpumcml_rng.h"
+#include "mc3d_rng.h"
+#include <cstdio>
 
 
 void rng_init(rng_state_t *rng_state, UINT64 seed, int num_rngs){
@@ -6,7 +8,7 @@ void rng_init(rng_state_t *rng_state, UINT64 seed, int num_rngs){
 	UINT64 *x_rng = new UINT64[num_rngs];
 	UINT32 *a_rng = new UINT32[num_rngs];
     	if (init_RNG(x_rng, a_rng, num_rngs, "safeprimes_base32.txt", seed)){
-		cerr << "Couldn't find safeprimes_base32.txt." << endl;
+		fprintf(stderr, "Couldn't find safeprimes_base32.txt.\n");
 		exit(1);
 	}
 	
