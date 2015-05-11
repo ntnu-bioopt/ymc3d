@@ -56,4 +56,4 @@ The plan is to replace the RNG so that the project can continue under a permissi
 safeprimes_base32.txt
 ---------------------
 
-This file is obtained from [GPU-MCML](https://code.google.com/p/gpumcml/). `mc3d_rng.cu` is hard-coded to look for it in the same directory as the executable (i.e. `build/`). 
+This file is obtained from [GPU-MCML](https://code.google.com/p/gpumcml/). `mc3d_rng.cu` is hard-coded to look for it in the same directory as the executable (i.e. `build/`). See src/mc3d_rng.cu.  
