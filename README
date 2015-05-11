@@ -8,7 +8,7 @@ hyperspectral imaging.
 It has primarily been developed for internal use, but is made available for the general public with the submission
 of the technical note: A. Bjorgan, M. Milanic, L. L. Randeberg, "YMC3D: GPU-accelerated 3D Monte Carlo photon tracking in tissue inclusions" (in submission). 
 
-A description of the implementation is also available in [this technical report](http://ntnu-bioopt.github.io/publications/technical reports/ymc3d implementation 2015.pdf). 
+A description of the implementation is also available in [this technical report](http://ntnu-bioopt.github.io/publications/technical_reports/Bjorgan2015_ymc3d_implementation.pdf). 
 
 Build instructions
 ------------------
