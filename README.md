@@ -16,15 +16,15 @@ Build instructions
 Install CMake (http://www.cmake.org/cmake/resources/software.html)  
 
 Building for Linux:
-1) Navigate to build directory
-2) Run cmake ..
-3) Run make
+1. Navigate to build directory
+2. Run cmake ..
+3. Run make
 
 Building for Windows:
-1) Navigate to build directory in cmd.exe
-2) Run cmake.exe ..
-3) Open Visual Studio solutions files in Visual Studio
-4) Build solution in Visual Studio 
+1. Navigate to build directory in cmd.exe
+2. Run cmake.exe ..
+3. Open Visual Studio solutions files in Visual Studio
+4. Build solution in Visual Studio 
 
 Running instructions
 --------------------
